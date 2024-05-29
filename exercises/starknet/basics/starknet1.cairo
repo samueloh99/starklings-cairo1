@@ -3,7 +3,7 @@
 // The contract shows that he is the owner of the contract.
 // However, his contract is not working. What's he missing?
 
-// I AM NOT DONE
+
 
 #[starknet::interface]
 trait IJoesContract<TContractState> {
@@ -15,6 +15,7 @@ mod JoesContract {
     #[storage]
     struct Storage {}
 
+    #[abi(embed_v0)]
     impl IJoesContractImpl of super::IJoesContract<ContractState> {
         fn get_owner(self: @ContractState) -> felt252 {
             'Joe'
@@ -41,7 +42,6 @@ mod test {
     #[available_gas(2000000000)]
     fn test_contract_view() {
         let dispatcher = deploy_contract();
-        let owner = dispatcher.get_owner();
         assert('Joe' == dispatcher.get_owner(), 'Joe should be the owner.');
     }
 

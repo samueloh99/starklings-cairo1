@@ -5,7 +5,7 @@
 // Help Jill rewrite the contract with a Storage and a constructor.
 // There is a `ContractAddress` type which should be used for Wallet addresses.
 
-// I AM NOT DONE
+
 
 use starknet::ContractAddress;
 
@@ -16,17 +16,20 @@ mod JillsContract {
 
     #[storage]
     struct Storage { // TODO: Add `contract_owner` storage, with ContractAddress type
+        contract_owner: ContractAddress,
     }
 
     #[constructor]
     fn constructor(
         ref self: ContractState, owner: ContractAddress
     ) { // TODO: Write `owner` to contract_owner storage
+        self.contract_owner.write(owner);
     }
 
-    #[external(v0)]
+    #[abi(embed_v0)]
     impl IJillsContractImpl of super::IJillsContract<ContractState> {
         fn get_owner(self: @ContractState) -> ContractAddress { // TODO: Read contract_owner storage
+            self.contract_owner.read()
         }
     }
 }
@@ -55,7 +58,6 @@ mod test {
     #[test]
     #[available_gas(2000000000)]
     fn test_owner_setting() {
-        let owner: felt252 = 'Jill';
         let mut calldata = ArrayTrait::new();
         calldata.append('Jill');
         let (address0, _) = deploy_syscall(
